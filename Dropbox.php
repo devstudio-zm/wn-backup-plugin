@@ -13,7 +13,7 @@ class Dropbox
 
     protected $fileSystem;
 
-    protected $path;
+    protected $path = '';
 
     public function __construct()
     {
@@ -21,8 +21,9 @@ class Dropbox
         $this->client = new Client($accessToken);
         $this->adapter = new DropboxAdapter($this->client);
         $this->fileSystem = new Filesystem($this->adapter);
-        if (isset($this->fileSystem->listContents()[0])) {
-            $this->path = $this->fileSystem->listContents()[0]['path'];
+        $contents = $this->fileSystem->listContents('')->toArray();
+        if (isset($contents[0])) {
+            $this->path = $contents[0]['path'];
         }
     }
 
@@ -33,7 +34,7 @@ class Dropbox
 
     public function downloadBackup($baseName)
     {
-        $file = $this->adapter->read($this->path.'/'.$baseName)['contents'];
+        $file = $this->adapter->read($this->path.'/'.$baseName);
         header("Content-Type: application/zip");
         echo $file;
     }

@@ -5,6 +5,7 @@ use League\Flysystem\Filesystem;
 use Spatie\Dropbox\Client as DropboxClient;
 use Illuminate\Support\ServiceProvider;
 use Spatie\FlysystemDropbox\DropboxAdapter;
+use Illuminate\Filesystem\FilesystemAdapter as LaravelFilesystemAdapter;
 
 class DropboxServiceProvider extends ServiceProvider
 {
@@ -17,8 +18,9 @@ class DropboxServiceProvider extends ServiceProvider
     {
         Storage::extend('dropbox', function ($app, $config) {
             $client = new DropboxClient($config['authorizationToken']);
+            $adapter = new DropboxAdapter($client);
 
-            return new Filesystem(new DropboxAdapter($client));
+            return new LaravelFilesystemAdapter(new Filesystem($adapter), $adapter, $config);
         });
     }
 
