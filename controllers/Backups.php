@@ -72,6 +72,24 @@ class Backups extends Controller
         return Storage::disk('webdav')->get($path);
     }
 
+    public function downloadLocalBackup($baseName)
+    {
+        $baseName = basename($baseName);
+
+        $path = Settings::getBackupsPath().'/'.$baseName;
+        if (!is_file($path)) {
+            // Fall back to the legacy backups path for files created before
+            // the upload path was moved (see Repository::getLocalBackupsInTheOldPath).
+            $path = storage_path('app/meb-backup').'/'.$baseName;
+        }
+
+        if (!is_file($path)) {
+            abort(404, 'Backup file not found.');
+        }
+
+        return Response::download($path);
+    }
+
     public function onCreateWholeProjectBackup()
     {
         config([
