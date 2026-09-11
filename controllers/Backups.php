@@ -72,7 +72,13 @@ class Backups extends Controller
         return Storage::disk('webdav')->get($path);
     }
 
-    public function downloadLocalBackup($baseName)
+    /**
+     * Backend actions must be named in lowercase to be routable
+     * (see Backend\Classes\Controller::actionExists()). The URL segment
+     * "download-local-backup" is resolved to this method by
+     * BackendController::parseAction().
+     */
+    public function download_local_backup($baseName)
     {
         $baseName = basename($baseName);
 
