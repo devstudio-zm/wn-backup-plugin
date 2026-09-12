@@ -1,6 +1,7 @@
 # Backup system for Winter CMS
 - [Overview](#introduction)
 - [Requirements](#requirements)
+- [Installation](#installation)
 - [Features](#features)
 - [Usage](#usage)
 - [Storage](#storage)
@@ -20,6 +21,47 @@ Make sure `mysqldump` is installed on your system if you want to backup MySQL da
 Make sure `pg_dump` is installed on your system if you want to backup PostgreSQL databases.
 
 Make sure `mongodump` is installed on your system if you want to backup Mongo databases.
+
+<a name="installation"></a>
+## Installation
+
+This is a fork of [`meb/wn-backup-plugin`](https://github.com/M-EB/wn-backup-plugin) and isn't published on Packagist under its own name, so a Winter CMS project has to be pointed at this repository directly via a Composer VCS repository, requiring the *same* package name the upstream plugin uses (`meb/wn-backup-plugin`). Composer checks explicitly declared repositories before falling back to Packagist, so this resolves the package to this fork instead of the upstream project.
+
+1. Add a `vcs` repository to your project's root `composer.json` and require the package on the branch (or tag) you want to track:
+
+    ```json
+    {
+        "repositories": [
+            {
+                "type": "vcs",
+                "url": "https://github.com/<your-fork>/wn-backup-plugin"
+            }
+        ],
+        "require": {
+            "meb/wn-backup-plugin": "dev-master"
+        }
+    }
+    ```
+
+2. Install it:
+
+    ```shell
+    composer require meb/wn-backup-plugin:dev-master
+    ```
+
+   Composer will install the plugin into `plugins/meb/backup` and update `composer.lock`, so a subsequent `composer install` on any other checkout of the project pulls the exact same commit — no repeated setup needed.
+
+3. Activate it. On a project whose database is already configured, run the standard Winter plugin migration once so the plugin's settings table is created:
+
+    ```shell
+    php artisan winter:up
+    ```
+
+4. To pull in the latest commit on the tracked branch later:
+
+    ```shell
+    composer update meb/wn-backup-plugin
+    ```
 
 <a name="features"></a>
 ## Features
